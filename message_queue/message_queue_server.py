@@ -39,6 +39,9 @@ async def client(reader: StreamReader, writer: StreamWriter):
                 # keep track of which client is next in the line for /queue distribution
                 subscribers.rotate()  # single rotation - O(1)
                 subscribers = [subscribers[0]]
+            # TODO: decouple the receiving of message from the sending of messages.
+            # send messages to subs in the samecoro as wehre new messages are received
+            # if sub is slow to consume data - we can't receive and process more messages while we wait
             await gather(*[send_message(subscriber, data) for subscriber in subscribers])
     except asyncio.CancelledError as cancelled_error:
         print(f"Remote {peer_name} closing connection. {cancelled_error=}")
