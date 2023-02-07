@@ -15,7 +15,7 @@ async def main(args):
         args.host, args.port
     )
     socket_name = writer.get_extra_info("sockname")
-    print(f"Opened connection.. writer socket name {socket_name}")
+    print(f"Opened connection.. listener writer socket name {socket_name}")
     channel = args.listen.encode()
     await send_message(writer, channel)  # send channel name to subscribe to
 
