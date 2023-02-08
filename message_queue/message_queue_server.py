@@ -1,7 +1,8 @@
 import asyncio
-from asyncio import StreamReader, StreamWriter, gather
+from asyncio import StreamReader, StreamWriter, Queue
 from collections import deque, defaultdict
-from typing import Deque, DefaultDict
+from contextlib import suppress
+from typing import Deque, DefaultDict, Dict
 from message_protocol import read_message, send_message
 
 
@@ -10,6 +11,8 @@ from message_protocol import read_message, send_message
 # they must first send a channel name they're subscribing to
 # deque will hold all the subscribers for a particular channel
 SUBSCRIBERS: DefaultDict[bytes, Deque] = defaultdict(deque)
+SEND_QUEUES: DefaultDict[StreamWriter, Queue] = defaultdict(Queue)
+CHANNEL_QUEUES: Dict[bytes, Queue] = {}
 
 
 async def client(reader: StreamReader, writer: StreamWriter):
@@ -53,6 +56,14 @@ async def client(reader: StreamReader, writer: StreamWriter):
         print(f"Remote {peer_name} closed.")
         # Remove from global collection - O(n) operation. But we have small amount of long-lived connections.
         SUBSCRIBERS[subscribe_channel].remove(writer)
+
+
+async def send_client(writer: StreamWriter, queue: Queue):
+    pass
+
+
+async def channel_sender(name: bytes):
+    pass
 
 
 async def main(*args, **kwargs):
